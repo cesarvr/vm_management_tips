@@ -1,6 +1,4 @@
-# Building Secure Software
-
-## Creating Deployment Packages  
+Creating Deployment Packages  
 
 A good practices is to keep the tools we use for build away from the machine we use in production workload. The idea behind this is to reduce the attack surface for possible bad actors.
 
