@@ -95,7 +95,7 @@ Trying to pull registry.access.redhat.com/ubi9/openjdk-21-runtime:1.24...
 To run it: 
 
 ```bash
-
+# Deploying the image into a container process...
 podman run localhost/rhel98-secure-java:latest
 
 =========================================
