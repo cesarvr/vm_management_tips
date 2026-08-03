@@ -56,3 +56,43 @@ ENTRYPOINT ["java", "Main"]
 ```
 
 > Now the Java application runs in an image with a greately shrink surface for attacks. 
+
+
+
+### Running Instructions 
+
+First we build the image, using the multi-stage discussed above: 
+
+```sh
+podman build -t rhel98-secure-java .  # Building the image... 
+
+[1/2] STEP 1/5: FROM ubi9/openjdk-21 AS builder
+[1/2] STEP 2/5: USER root
+--> Using cache 145e1406db0a387a60ea3fe225bae56ba6becb6e587b80ee7d0dfc54c881be89
+--> 145e1406db0a
+[1/2] STEP 3/5: WORKDIR /build
+--> Using cache dfe9de0aabb28ac245d8801fcc348c8da87a6adae85664575165a256c89079dc
+--> dfe9de0aabb2
+[1/2] STEP 4/5: COPY Main.java .
+--> Using cache 25594ab4ffa8d481184aa94a39c85e5f8819fa24b78d0fc02f0615b537b43257
+--> 25594ab4ffa8
+[1/2] STEP 5/5: RUN javac Main.java
+--> Using cache 960c69523aaed3523691128debcbe0dd4d8fbeff9c49d99d19ef6995bbc36122
+--> 960c69523aae
+[2/2] STEP 1/4: FROM registry.access.redhat.com/ubi9/openjdk-21-runtime:1.24
+Trying to pull registry.access.redhat.com/ubi9/openjdk-21-runtime:1.24...
+...
+...
+```
+
+To run it: 
+
+```sh
+podman run localhost/rhel98-secure-java:latest
+
+=========================================
+Hello World from Secure RHEL 9.8 Micro!
+Vim-minimal is completely removed here.
+=========================================
+```
+
