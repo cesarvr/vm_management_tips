@@ -31,18 +31,28 @@ WORKDIR /app
 ENTRYPOINT ["java", "Main"]
 ```
 
-Running the distro-less Java will return:
+Even if this image has the runtime only tools it also includes some tools that make debugging this image easier in productions. Sometimes this tools are necessary and should be part of the risks acceptance. 
 
-```sh
-[rhel9@localhost test]$ podman ps
-CONTAINER ID  IMAGE
-aa15667fce3a  localhost/distroless-java:latest
-```
+As an extra level of harnessing we can trade off easy to observe and debug (unless we have some proper observability tools baked into the deployable package) with an image that include just the minimal J2EE packages and remove everything else including the shell. 
 
-```sh
-[rhel9@localhost test]$ podman exec -it aa15667fce3a  bash
-Error: crun: executable file `bash` not found in $PATH: No such file 
-or directory: OCI runtime attempted to invoke a command that was not found
+##### Example:
+
+```dockefile 
+# We use root here, but don't worry its scope ends on line 10.
+USER root  
+
+WORKDIR /build
+COPY Main.java .
+# Compile the native Java class into a bytecode runner
+RUN javac Main.java
+
+# STAGE 2: FROM GCP -> (No Shells, No DNF, No Vim)
+FROM gcr.io/distroless/java21:latest 
+# Copy the compiled .class file from the builder stage straight to production
+COPY --from=builder /build/Main.class /app/Main.class
+WORKDIR /app
+# Run using the explicit vector execution array syntax
+ENTRYPOINT ["java", "Main"]
 ```
 
 > Now the Java application runs in an image with a greately shrink surface for attacks. 

@@ -1,0 +1,15 @@
+# We use root here, but don't worry its scope ends on line 10.
+USER root  
+
+WORKDIR /build
+COPY Main.java .
+# Compile the native Java class into a bytecode runner
+RUN javac Main.java
+
+# STAGE 2: FROM GCP -> (No Shells, No DNF, No Vim)
+FROM gcr.io/distroless/java21:latest 
+# Copy the compiled .class file from the builder stage straight to production
+COPY --from=builder /build/Main.class /app/Main.class
+WORKDIR /app
+# Run using the explicit vector execution array syntax
+ENTRYPOINT ["java", "Main"]
