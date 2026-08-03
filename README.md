@@ -8,8 +8,6 @@ For this reason we can use this recommended aproach which consist in dividing th
 
 First image do the build of the deployable. And the **second image** do run the package. 
 
-> In this case for this example we use a Java project, we compile first the project with a builder image and we push the final binary than will run inside a runtime image (An image that only includes minimal tools to run the binary)
-
 
 
 ```dockerfile
@@ -34,6 +32,10 @@ WORKDIR /app
 ENTRYPOINT ["java", "Main"]
 
 ```
+
+
+> In this case for this example we use a Java project, we compile first the project with a builder image and we push the final binary than will run inside a runtime image (An image that only includes minimal tools to run the binary)
+
 
 Even if this image has the runtime only tools it also includes some tools that make debugging this image easier in productions. Sometimes this tools are necessary and should be part of the risks acceptance. 
 
