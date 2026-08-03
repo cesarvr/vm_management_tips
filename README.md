@@ -10,7 +10,8 @@ First image do the build of the deployable. And the **second image** do the
 
 
 
-```dockerfile 
+```dockerfile
+
 #STAGE 1 
 FROM ubi9/openjdk-21 AS builder
 
@@ -29,6 +30,7 @@ COPY --from=builder /build/Main.class /app/Main.class
 WORKDIR /app
 # Run using the explicit vector execution array syntax
 ENTRYPOINT ["java", "Main"]
+
 ```
 
 Even if this image has the runtime only tools it also includes some tools that make debugging this image easier in productions. Sometimes this tools are necessary and should be part of the risks acceptance. 
@@ -37,7 +39,8 @@ As an extra level of harnessing we can trade off easy to observe and debug (unle
 
 ##### Example:
 
-```dockefile 
+```dockerfile
+
 # We use root here, but don't worry its scope ends on line 10.
 USER root  
 
@@ -53,7 +56,9 @@ COPY --from=builder /build/Main.class /app/Main.class
 WORKDIR /app
 # Run using the explicit vector execution array syntax
 ENTRYPOINT ["java", "Main"]
+
 ```
+
 
 > Now the Java application runs in an image with a greately shrink surface for attacks. 
 
@@ -63,7 +68,8 @@ ENTRYPOINT ["java", "Main"]
 
 First we build the image, using the multi-stage discussed above: 
 
-```sh
+```bash
+
 podman build -t rhel98-secure-java .  # Building the image... 
 
 [1/2] STEP 1/5: FROM ubi9/openjdk-21 AS builder
@@ -83,16 +89,19 @@ podman build -t rhel98-secure-java .  # Building the image...
 Trying to pull registry.access.redhat.com/ubi9/openjdk-21-runtime:1.24...
 ...
 ...
+
 ```
 
 To run it: 
 
-```sh
+```bash
+
 podman run localhost/rhel98-secure-java:latest
 
 =========================================
 Hello World from Secure RHEL 9.8 Micro!
 Vim-minimal is completely removed here.
 =========================================
+
 ```
 
