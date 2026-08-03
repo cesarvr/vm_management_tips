@@ -6,7 +6,9 @@ A good practices is to keep the tools we use for build away from the machine we 
 
 For this reason we can use this recommended aproach which consist in dividing the build process in two stages and two separated images. 
 
-First image do the build of the deployable. And the **second image** do the 
+First image do the build of the deployable. And the **second image** do run the package. 
+
+> In this case for this example we use a Java project, we compile first the project with a builder image and we push the final binary than will run inside a runtime image (An image that only includes minimal tools to run the binary)
 
 
 
