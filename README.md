@@ -66,7 +66,7 @@ ENTRYPOINT ["java", "Main"]
 
 
 
-### Running Instructions 
+### Running
 
 First we build the image, using the multi-stage discussed above: 
 
