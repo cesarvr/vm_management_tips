@@ -126,6 +126,8 @@ Aug 31 02:00:05 server01 dnf-automatic[14205]:  kernel                x86_64    
 ...
 ```
 
+> We usually check here the logs after the job has run.
+
 ## 3. Automatic Updates on SUSE Linux Enterprise Server (SLES 15.5)
 
 ### Step 1: Create the Systemd Service Unit
@@ -241,3 +243,5 @@ Aug 31 02:00:05 server01 dnf-automatic[14205]:  kernel                x86_64    
 ...
 ...
 ```
+
+> We usually check here the logs after the job has run.
