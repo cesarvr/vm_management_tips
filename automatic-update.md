@@ -1,7 +1,7 @@
 # Automatic Updates Implementation Guide
 **Authored by:** Cesar Valdez
 
----
+
 
 ## 1. Overview & Architecture Strategy
 
