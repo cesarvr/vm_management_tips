@@ -228,3 +228,16 @@ sudo journalctl -u dnf-automatic-install.service
 Typical output:
 
 ```sh
+-- Logs begin at Mon 2026-08-01 00:00:00 CEST, end at Thu 2026-08-27 13:15:00 CEST. --
+Aug 31 02:00:00 server01 systemd[1]: Starting dnf-automatic-install.service - dnf automatic install updates...
+Aug 31 02:00:02 server01 dnf-automatic[14205]: Last metadata expiration check: 1:12:04 ago on Thu 27 Aug 2026 12:07:56 PM CEST.
+Aug 31 02:00:05 server01 dnf-automatic[14205]: Dependencies resolved.
+Aug 31 02:00:05 server01 dnf-automatic[14205]: ================================================================================
+Aug 31 02:00:05 server01 dnf-automatic[14205]:  Package               Arch       Version                  Repository      Size
+Aug 31 02:00:05 server01 dnf-automatic[14205]: ================================================================================
+Aug 31 02:00:05 server01 dnf-automatic[14205]: Upgrading:
+Aug 31 02:00:05 server01 dnf-automatic[14205]:  openssl-libs          x86_64     3.0.7-27.el9_4           rhel-9-appstream 2.2 M
+Aug 31 02:00:05 server01 dnf-automatic[14205]:  kernel                x86_64     5.14.0-427.28.1.el9_4    rhel-9-baseos    5.2
+...
+...
+```
