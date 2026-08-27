@@ -187,7 +187,6 @@ sudo nano /etc/systemd/system/zypper-security-update.timer
 Paste the following timer configuration:
 
 ```toml
-Paste the following timer configuration:
 [Unit]
 Description=Timer for End-of-Month Zypper Security Patches
 
@@ -198,3 +197,34 @@ Persistent=true
 [Install]
 WantedBy=timers.target
 ```
+
+### Step 3: Running & Testing
+
+To enable and start the timer:
+
+```bash
+sudo systemctl enable --now dnf-automatic-install.timer
+```
+
+Verify:
+
+```bash
+sudo systemctl list-timers dnf-automatic-install.timer
+```
+
+You should see something like this: 
+
+```bash 
+NEXT                        LEFT       LAST PASSED UNIT                            ACTIVATES
+Tue 2026-09-01 02:00:00 CEST 4 days left n/a  n/a    dnf-automatic-install.timer     dnf-automatic-install.service
+```
+
+If you want to see the logs: 
+
+```sh
+sudo journalctl -u dnf-automatic-install.service
+```
+
+Typical output:
+
+```sh
