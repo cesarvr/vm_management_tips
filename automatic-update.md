@@ -67,19 +67,7 @@ By default, the timer runs daily. Create a systemd drop-in file to change its sc
     Persistent=true
     ```
 
-   Here is a breakdown of how the `OnCalendar` expression `*-*-~01 02:00:00` works in systemd timers:
-
-##### Understanding the Systemd Timer Expression
-
-The syntax `*-*-~01 02:00:00` uses systemd's **OnCalendar** time format, which follows a general pattern of `Year-Month-Day Hour:Minute:Second`.
-
-##### Field Breakdown
-
-* **`*` (Year):** The first asterisk means "every year".
-* **`*` (Month):** The second asterisk means "every month".
-* **`01` (Day):** Day of the month.
-
-* Systemd automatically handles different month lengths, correctly targeting the 28th/29th of February, the 30th of April/June/September/November, and the 31st of all other months.
+   Here is a breakdown of how the `OnCalendar` expression `*-*-01 02:00:00` works in systemd timers:
 
 
 ### Step 4: Running & Testing
@@ -193,7 +181,7 @@ Paste the following timer configuration:
 Description=Timer for End-of-Month Zypper Security Patches
 
 [Timer]
-OnCalendar=*-*-~01 02:00:00
+OnCalendar=*-*-01 02:00:00
 Persistent=true
 
 [Install]
@@ -408,3 +396,19 @@ sudo systemctl list-timers apt-daily-upgrade.timer
 
 **Expected Output:**
 The **NEXT** column will show the date of the upcoming 3rd Saturday of the month at `02:00:00`.
+
+
+## Timers
+
+The syntax `*-*-01 02:00:00` uses systemd's **OnCalendar** time format, which follows a general pattern of `Year-Month-Day Hour:Minute:Second`.
+
+##### Field Breakdown
+
+* **`*` (Year):** The first asterisk means "every year".
+* **`*` (Month):** The second asterisk means "every month".
+* **`01` (Day):** Day of the month.
+
+* Systemd automatically handles different month lengths, correctly targeting the 28th/29th of February, the 30th of April/June/September/November, and the 31st of all other months.
+
+> Some distribution support the `~` this symbol to define a timer that triggers an action in the last day/s of the month. You can try to use something like this `OnCalendar=*-*-01 02:00:00` on supported Linux Distributions. 
+
