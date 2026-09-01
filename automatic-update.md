@@ -77,11 +77,10 @@ The syntax `*-*-~01 02:00:00` uses systemd's **OnCalendar** time format, which f
 
 * **`*` (Year):** The first asterisk means "every year".
 * **`*` (Month):** The second asterisk means "every month".
-* **`~01` (Day):** The tilde (`~`) syntax represents counting days **backwards from the end of the month**. `~01` targets the **last day of the month**.
+* **`01` (Day):** Day of the month.
 
 * Systemd automatically handles different month lengths, correctly targeting the 28th/29th of February, the 30th of April/June/September/November, and the 31st of all other months.
 
-> On RHEL 9.8 the `~` is not supported. 
 
 ### Step 4: Running & Testing
 
@@ -246,3 +245,166 @@ Aug 31 02:00:05 server01 dnf-automatic[14205]:  kernel                x86_64    
 ```
 
 > We usually check here the logs after the job has run.
+
+
+
+## Automatic Updates On Debian / Ubuntu 
+
+Both systems come pre-configured to **only install security updates by default**, leaving general feature updates for manual installation.
+
+---
+
+### Step-by-Step Setup (Works for both Debian & Ubuntu)
+
+#### 1. Install and Enable the Package
+
+Run the following commands to install the utility and enable the automated service:
+
+```bash
+sudo apt update
+sudo apt install -y unattended-upgrades apt-listchanges
+sudo dpkg-reconfigure -plow unattended-upgrades
+
+```
+
+When prompted in the terminal interface, select **YES** to enable automatic upgrades.
+
+---
+
+#### 2. Confirm the Daily Schedule
+
+Enabling the service automatically creates the `/etc/apt/apt.conf.d/20auto-upgrades` file. You can verify its content with:
+
+```bash
+cat /etc/apt/apt.conf.d/20auto-upgrades
+
+```
+
+Ensure it contains these two lines (which tell APT to fetch package lists and run unattended upgrades once daily):
+
+```ini
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+
+```
+
+---
+
+#### 3. Verify "Security-Only" Rules (The Only Main Difference)
+
+The configuration file `/etc/apt/apt.conf.d/50unattended-upgrades` defines which repositories are allowed to update automatically.
+
+By default, both OSes restrict this to security channels, but the internal repository syntax differs slightly between them.
+
+* **Ubuntu:** Uses `Allowed-Origins`. Open `/etc/apt/apt.conf.d/50unattended-upgrades` and ensure only the `-security` origin lines are active:
+```text
+Unattended-Upgrade::Allowed-Origins {
+    "${distro_id}:${distro_codename}-security";
+};
+
+```
+
+* **Debian:** Uses `Origins-Pattern`. Ensure only the `Debian-Security` line is uncommented:
+```text
+Unattended-Upgrade::Origins-Pattern {
+    "origin=Debian,codename=${distro_codename}-security,label=Debian-Security";
+};
+
+```
+
+
+
+---
+
+### Useful Management Commands
+
+* **Dry-Run (Test configuration without applying changes):**
+```bash
+sudo unattended-upgrade --dry-run --debug
+
+```
+
+
+* **Check Logs:**
+```bash
+sudo tail -f /var/log/unattended-upgrades/unattended-upgrades.log
+
+```
+
+
+* **Check Pending Reboots:**
+```bash
+cat /var/run/reboot-required
+
+```
+
+
+To run Debian/Ubuntu `unattended-upgrades` specifically on the **third weekend of the month at 02:00 AM**, you adjust the underlying systemd timer (`apt-daily-upgrade.timer`) rather than the APT configuration itself.
+
+Debian and Ubuntu use `apt-daily-upgrade.timer` to trigger the actual upgrade process.
+
+---
+
+### 4 Setup A Timer
+
+Open the systemd drop-in editor for the upgrade timer:
+
+```bash
+sudo systemctl edit apt-daily-upgrade.timer
+
+```
+
+Paste the following configuration:
+
+```ini
+[Timer]
+OnCalendar=
+OnCalendar=Sat *-*-15..21 02:00:00
+Persistent=true
+
+```
+
+> This example choose a date between day 15/21 of each month at 2:00 AM.
+---
+
+### 5 Disable the Download Timer (Optional but Recommended)
+
+By default, APT runs a separate download task (`apt-daily.timer`) to fetch packages ahead of time. To force package downloading and installation to happen together at 02:00 AM during your maintenance window:
+
+1. Edit the download timer:
+```bash
+sudo systemctl edit apt-daily.timer
+
+```
+
+
+2. Sync its schedule to match or run slightly earlier:
+```ini
+[Timer]
+OnCalendar=
+OnCalendar=Sat *-*-15..21 01:30:00
+Persistent=true
+
+```
+
+---
+
+### 6 Apply and Verify
+
+Reload systemd and restart the timer:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart apt-daily-upgrade.timer
+
+```
+
+Check when the systemd timer is scheduled to trigger next:
+
+```bash
+sudo systemctl list-timers apt-daily-upgrade.timer
+
+```
+
+**Expected Output:**
+The **NEXT** column will show the date of the upcoming 3rd Saturday of the month at `02:00:00`.
