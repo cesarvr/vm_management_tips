@@ -3,6 +3,15 @@
 
 <BR>
 
+## Table of Contents
+
+* [1. Overview & Architecture Strategy](#1-overview--architecture-strategy)
+* [2. Automatic Updates on Red Hat Enterprise Linux (RHEL 9.x)](#2-automatic-updates-on-red-hat-enterprise-linux-rhel-9x)
+* [3. Automatic Updates on SUSE Linux Enterprise Server (SLES 15.5)](#3-automatic-updates-on-suse-linux-enterprise-server-sles-155)
+* [4. Automatic Updates On Debian / Ubuntu](#automatic-updates-on-debian--ubuntu)
+* [5. Timers](#timers)
+
+<BR>
 
 ## 1. Overview & Architecture Strategy
 
