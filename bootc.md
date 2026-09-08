@@ -8,7 +8,7 @@
 
 * **Build Host:** A Linux host (RHEL 9, CentOS Stream 9, or Fedora) with `podman` installed and elevated/sudo privileges.
 * **Target Environment:** KVM/QEMU, libvirt, VMware, or any local hypervisor to launch a `.qcow2` virtual machine.
-* **Registry Access:** Access to a container registry (e.g., Red Hat Quay, GitHub Packages, or AWS ECR) to test remote OS pushes/pulls.
+* **Registry Access:** Access to a container registry (e.g., Red Hat Quay, GitHub Packages, **Azure Container Registry**  or AWS ECR) to test remote OS pushes/pulls.
 
 ---
 
