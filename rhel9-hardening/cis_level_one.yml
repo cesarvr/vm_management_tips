@@ -1,0 +1,28 @@
+---
+- name: Apply CIS Level 1 Hardening (Preserving Azure Entra ID)
+  hosts: localhost
+  become: true
+  vars:
+    # Set a custom authselect profile name to satisfy validation checks
+    rhel9cis_authselect_custom_profile_name: "entra_id_profile"
+
+    # Disable strict version assertion check
+    # RHEL 9.8 includes a lower version of Ansible that the one required by ansible-lockdown
+    skip_ansible_version_check: true
+    rhel_09_cis_ansible_version_check: false
+    skip_ansible_version_check: true
+
+    # Enforce CIS Level 1 Server
+    rhel9cis_level: 1
+    rhel9cis_type: "server"
+
+    # PRESERVE ENTRA ID AUTHENTICATION & SSH
+    # Prevent CIS from overwriting SSSD/PAM profiles needed for Entra ID/PAM integration
+    rhel9cis_rule_5_3_2: false       # Skip modifying PAM authselect profile
+    rhel9cis_rule_5_3_3: false       # Skip overriding custom authselect features
+
+    # Ensure SSH permits necessary settings for Entra ID SSH extensions (if applicable)
+    rhel9cis_sshd_pam: "yes"
+
+  roles:
+    - role: ansible-lockdown.rhel9_cis
