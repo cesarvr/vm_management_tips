@@ -34,7 +34,7 @@ This approach provides a portable, zero-dependency hardening runner ideal for in
 
 ### 2. Change Inventory File  
 
-By default in this example is pointing to the local, if you need change it to remote: 
+By default in this example is pointing to the local, if you might need to change the ip address so it points to a remote VM: 
 
 ```properties
 localhost ansible_connection=ssh ansible_host=127.0.0.1 ansible_user=admin
