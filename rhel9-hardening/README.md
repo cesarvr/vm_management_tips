@@ -27,13 +27,14 @@ This approach provides a portable, zero-dependency hardening runner ideal for in
 
 This command runs an automated security compliance audit against a RHEL 9 system using OpenSCAP, measuring your current system configuration against the CIS (Center for Internet Security) Level 1 benchmark.
 
-``Bash
+```bash
+
 sudo oscap xccdf eval \
   --profile xccdf_org.ssgproject.content_profile_cis \
   --report report.html \
   --results results.xml \
   /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
-``
+```
 
 > ``content_profile_cis`` Is the security baseline.
 
