@@ -418,6 +418,8 @@ The syntax `*-*-01 02:00:00` uses systemd's **OnCalendar** time format, which fo
 
 ## Restart
 
+### On RHEL 9
+
 Some pieces of the Linux like the **kernel** require restart upon update, in order to configure this we need to edit the ``sudo nano /etc/dnf/automatic.conf``: 
 
 ```toml
@@ -438,6 +440,26 @@ sudo systemctl restart dnf-automatic-install.timer
 > So the system timers load the new values in memory.
 
 
+### SUSE 15.5 
+
+On **SUSE 15** a change the execution script is required.
+
+```sh
+[Unit]
+Description=Automated End-of-Month Zypper Security Patches
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c '\
+  /usr/bin/zypper --non-interactive patch --category security --auto-agree-with-licenses && \
+  if /usr/bin/zypper ps -s | grep -q "Reboot suggested"; then \
+    /usr/sbin/shutdown -r +2 "Rebooting system after automatic security updates"; \
+  fi'
+```
+
+> Here we adding a conditional checking for the reboot flag and if this flag exist it sends a message and reboot in two minutes. 
 
 
 
