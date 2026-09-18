@@ -10,6 +10,7 @@
 * [3. Automatic Updates on SUSE Linux Enterprise Server (SLES 15.5)](#3-automatic-updates-on-suse-linux-enterprise-server-sles-155)
 * [4. Automatic Updates On Debian / Ubuntu](#automatic-updates-on-debian--ubuntu)
 * [5. Timers](#timers)
+* [6. Restart When Required](#restart)
 
 <BR>
 
@@ -420,4 +421,29 @@ The syntax `*-*-01 02:00:00` uses systemd's **OnCalendar** time format, which fo
 * Systemd automatically handles different month lengths, correctly targeting the 28th/29th of February, the 30th of April/June/September/November, and the 31st of all other months.
 
 > Some distribution support the `~` this symbol to define a timer that triggers an action in the last day/s of the month. You can try to use something like this `OnCalendar=*-*-01 02:00:00` on supported Linux Distributions. 
+
+## Restart
+
+Some pieces of the Linux like the **kernel** require restart upon update, in order to configure this we need to edit the ``sudo nano /etc/dnf/automatic.conf``: 
+
+```toml
+[commands]
+# Valid values: "never", "when-needed", "always"
+reboot = when-needed
+
+# Optional: Customize the command or delay (defaults to immediately scheduling a shutdown)
+reboot_command = "shutdown -r +2 'Rebooting system after automatic security updates'"
+```
+
+Save your changes and do: 
+
+```sh
+sudo systemctl restart dnf-automatic-install.timer
+```
+
+> So the system timers load the new values in memory.
+
+
+
+
 
