@@ -14,10 +14,6 @@
 
 <BR>
 
-## 1. Overview & Architecture Strategy
-
-Kerry manages several virtual machines in vSphere that are currently not managed by Azure. Because of this, onboard options for the Azure Automatic Update program are not viable at the moment.
-
 ### About Using Cron vs. Systemd Timers
 
 * **Missed Execution Handling (Power Down):** If your system is powered off, down for maintenance, or suspended when the end-of-month cron job triggers, `cron` simply misses it and will not run until the next month. `Systemd Timers` feature built-in persistence (`Persistent=true`). If the system is offline during the scheduled run time, systemd executes the update immediately upon the next boot.
