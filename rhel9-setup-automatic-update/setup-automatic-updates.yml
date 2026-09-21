@@ -1,0 +1,65 @@
+---
+- name: Configure dnf-automatic for 3rd weekend security updates
+  hosts: rhel9_cluster  
+  become: true
+  tasks:
+    - name: Install dnf-automatic package
+      ansible.builtin.dnf:
+        name: dnf-automatic
+        state: present
+
+    - name: Configure dnf-automatic for security updates and automatic reboots
+      ansible.builtin.ini_file:
+        path: /etc/dnf/automatic.conf
+        section: "{{ item.section }}"
+        option: "{{ item.option }}"
+        value: "{{ item.value }}"
+        mode: '0644'
+      loop:
+        # Limit to security updates only
+        - { section: 'commands', option: 'upgrade_type', value: 'security' }
+        - { section: 'commands', option: 'apply_updates', value: 'yes' }
+        # Trigger automatic reboot if kernel/critical updates require it
+        - { section: 'commands', option: 'reboot', value: 'when-needed' }
+        - { section: 'commands', option: 'reboot_command', value: 'shutdown -r +5 "System rebooting after automatic security updates"' }
+      notify: Restart dnf-automatic timer
+
+    - name: Create Systemd override directory for dnf-automatic.timer
+      ansible.builtin.file:
+        path: /etc/systemd/system/dnf-automatic.timer.d
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Configure dnf-automatic timer for 3rd weekend of the month
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/dnf-automatic.timer.d/schedule.conf
+        mode: '0644'
+        content: |
+          [Timer]
+          # Clear existing default OnCalendar schedule
+          OnCalendar=
+          # Schedule for 3rd Saturday and 3rd Sunday of the month at 02:00
+          OnCalendar=Sat *-*-15..21 02:00:00
+          OnCalendar=Sun *-*-15..21 02:00:00
+          RandomizedDelaySec=60m
+      notify:
+        - Reload systemd daemon
+        - Restart dnf-automatic timer
+
+    - name: Ensure dnf-automatic timer is enabled and running
+      ansible.builtin.systemd:
+        name: dnf-automatic.timer
+        enabled: true
+        state: started
+
+  handlers:
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Restart dnf-automatic timer
+      ansible.builtin.systemd:
+        name: dnf-automatic.timer
+        state: restarted
