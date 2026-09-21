@@ -8,7 +8,7 @@
 * [3. Automatic Updates on SUSE Linux Enterprise Server (SLES 15.5)](#3-automatic-updates-on-suse-linux-enterprise-server-sles-155)
 * [4. Automatic Updates On Debian / Ubuntu](#automatic-updates-on-debian--ubuntu)
 * [5. Timers](#timers)
-* [6. Restart When Required](https://github.com/cesarvr/vm_management_tips/blob/main/automatic-update.md#restart)
+* [6. Restart When Required](#restart)
 
 <BR>
 
