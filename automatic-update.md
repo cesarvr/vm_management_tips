@@ -9,6 +9,7 @@
 * [4. Automatic Updates On Debian / Ubuntu](#automatic-updates-on-debian--ubuntu)
 * [5. Timers](#timers)
 * [6. Restart When Required](#restart)
+* [7. Doing This with Ansible](https://github.com/cesarvr/vm_management_tips/tree/main/rhel9-setup-automatic-update)
 
 <BR>
 
