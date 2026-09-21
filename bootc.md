@@ -17,6 +17,7 @@
 In RHEL 9 image-mode, workloads are defined declaratively using **Podman Quadlet** files. When systemd boots, it automatically translates Quadlet files into native systemd unit services.
 
 1. Create a local workspace directory on your build machine:
+
 ```bash
 mkdir -p ~/bootc-poc/files
 cd ~/bootc-poc
@@ -139,8 +140,6 @@ podman build -t quay.io/your-org/rhel9-bootc-poc:v1.1.0 .
 podman push quay.io/your-org/rhel9-bootc-poc:v1.1.0
 
 ```
-
-
 
 ### Step 5.2: Apply the Atomic Update
 
