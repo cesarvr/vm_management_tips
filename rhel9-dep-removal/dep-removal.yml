@@ -1,0 +1,13 @@
+---
+- name: Install utility packages
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Ensure vim, nmap, and bluez are installed
+      ansible.builtin.package:
+        name:
+          - vim
+          - nmap
+          - bluez
+        state: absent
