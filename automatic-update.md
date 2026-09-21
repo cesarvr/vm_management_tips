@@ -461,5 +461,52 @@ ExecStart=/bin/bash -c '\
 
 > Here we adding a conditional checking for the reboot flag and if this flag exist it sends a message and reboot in two minutes. 
 
+### Debian/Ubuntu 
+
+To enable automatic reboots when updates (such as kernel security patches) require a system restart, you can configure `unattended-upgrades` directly in its main configuration file.
+
+1. **Open the unattended-upgrades configuration file:** Requires sudo privileges.
+Open the file in a text editor like `nano`:
+
+```bash
+sudo nano /etc/apt/apt.conf.d/50unattended-upgrades
+
+```
+
+To verify the file opens correctly, ensure you see lines starting with `Unattended-Upgrade::`.
 
 
+2. **Enable automatic reboots:** Configuration edit.
+Scroll down to the reboot section (or search with `Ctrl+W` for `Automatic-Reboot`) and uncomment/modify the following lines by removing the leading `//`:
+
+```text
+Unattended-Upgrade::Automatic-Reboot "true";
+
+```
+
+To avoid unexpected downtime during peak hours, specify a specific reboot time (e.g., 02:00 AM):
+
+```text
+Unattended-Upgrade::Automatic-Reboot-Time "02:00";
+
+```
+
+*(Optional)* To reboot even if users are logged into the system:
+
+```text
+Unattended-Upgrade::Automatic-Reboot-WithUsers "true";
+
+```
+
+Save the file and exit (`Ctrl+O`, `Enter`, `Ctrl+X`).
+
+
+3. **Verify configuration validity:** Dry run.
+Run the configuration check to confirm syntax is valid:
+
+```bash
+sudo unattended-upgrade --dry-run --debug | grep -i reboot
+
+```
+
+To verify this step succeeded, check that the output mentions `Automatic-Reboot` being set to `true` without returning syntax errors.
