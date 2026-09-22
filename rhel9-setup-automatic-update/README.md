@@ -18,7 +18,7 @@ ansible rhel9_cluster -i inventory.ini -m ping
 
 
 ```sh
-    ansible-playbook -i inventory.ini setup-automatic-updates.yml
+ansible-playbook -i inventory.ini setup-automatic-updates.yml
 ```
 
 > All host should be configure with automatic update.
