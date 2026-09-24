@@ -1,0 +1,51 @@
+---
+- name: Get installed software on managed hosts
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    # ------------------------------------------------------------------
+    # 1. Linux Strategy: Cross-distro package_facts (APT / RPM / DNF / YUM)
+    # ------------------------------------------------------------------
+    - name: Gather package facts on Linux targets
+      ansible.builtin.package_facts:
+        manager: auto
+      when: ansible_facts['system'] == 'Linux'
+
+    - name: Display installed Linux packages
+      ansible.builtin.debug:
+        msg: "{{ item }} — {{ ansible_facts.packages[item][0].version }}"
+      loop: "{{ ansible_facts.packages.keys() | list }}"
+      when:
+        - ansible_facts['system'] == 'Linux'
+        - ansible_facts.packages is defined
+
+
+        # ------------------------------------------------------------------
+    # 3. Create destination directory on control node
+    # ------------------------------------------------------------------
+    - name: Ensure inventory directory exists on control node
+      ansible.builtin.file:
+        path: "./software_inventory"
+        state: directory
+        mode: '0755'
+      delegate_to: localhost
+      run_once: true
+
+    # ------------------------------------------------------------------
+    # 4. Write software output to text file on control node
+    # ------------------------------------------------------------------
+    - name: Save software list to file for Linux
+      ansible.builtin.copy:
+        content: |
+          Installed Software Audit for {{ inventory_hostname }} ({{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }})
+          Generated: {{ ansible_date_time.iso8601 }}
+          ================================================================================
+
+          {% for pkg in ansible_facts.packages.keys() | sort %}
+          - {{ pkg }} (Version: {{ ansible_facts.packages[pkg][0].version }})
+          {% endfor %}
+        dest: "./software_inventory/{{ inventory_hostname }}_software.txt"
+        mode: '0644'
+      delegate_to: localhost
+      when: ansible_facts['system'] == 'Linux'

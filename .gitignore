@@ -1,4 +1,5 @@
 default-vm
+software_inventory
 default-vm.pub
 
 # SSH Keys
