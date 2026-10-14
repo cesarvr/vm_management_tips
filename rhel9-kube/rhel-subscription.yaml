@@ -4,7 +4,7 @@
   tasks:
     - name: Register RHEL 9 nodes
       ansible.builtin.redhat_subscription:
-        username: "cesar_valdez"
-        password: "xydvy4-nijbyt-tuFtys"
+        username: "redhat_user"
+        password: "redhat_password"
         auto_attach: true
  
