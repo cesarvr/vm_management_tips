@@ -49,19 +49,8 @@
 
     - name: Set hostname on Control Plane node
       ansible.builtin.hostname:
-        name: k8s-control
+        name: k8s-master
       when: inventory_hostname == 'node1'  # Change 'vm1' to match your inventory host name
-
-    - name: Set hostname on Worker 1 node
-      ansible.builtin.hostname:
-        name: k8s-worker1
-      when: inventory_hostname == 'node2'  # Change 'vm2' to match your inventory host name
-
-    - name: Set hostname on Worker 2 node
-      ansible.builtin.hostname:
-        name: k8s-worker2
-      when: inventory_hostname == 'node3'  # Change 'vm3' to match your inventory host name
-
 
 
     # Adding all the nodes hostname to each node /etc/hosts 

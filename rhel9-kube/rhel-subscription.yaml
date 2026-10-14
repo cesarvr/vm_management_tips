@@ -1,0 +1,10 @@
+---
+- name: Configure Firewall for Kubernetes Control Plane Nodes
+  hosts: all
+  tasks:
+    - name: Register RHEL 9 nodes
+      ansible.builtin.redhat_subscription:
+        username: "cesar_valdez"
+        password: "xydvy4-nijbyt-tuFtys"
+        auto_attach: true
+ 

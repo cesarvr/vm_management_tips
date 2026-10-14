@@ -128,16 +128,21 @@ resource "libvirt_cloudinit_disk" "commoninit" {
 # 5. Create the Virtual Machines
 resource "libvirt_domain" "k8s_node" {
   for_each = local.nodes
+
   name     = each.key
   memory   = "4096" # 4 GB RAM per node
   vcpu     = 2
+
+  cpu {
+    mode = "host-passthrough"
+  }
 
   cloudinit = libvirt_cloudinit_disk.commoninit[each.key].id
 
   network_interface {
     network_id     = libvirt_network.k8s_net.id
     addresses      = [each.value]
-    wait_for_lease = true
+    wait_for_lease = false
   }
 
   disk {
