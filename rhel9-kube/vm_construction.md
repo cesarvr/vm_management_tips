@@ -1,5 +1,3 @@
-Because your CachyOS host uses **Wi-Fi**, standard bridging won't work due to 802.11 frame restrictions. The ideal setup for a local Kubernetes cluster is a **dedicated NAT virtual network** inside `libvirt`.
-
 In this setup:
 
 * The 3 RHEL 9 VMs sit on an isolated virtual subnet (e.g., `192.168.100.0/24`) with permanent static IPs.
