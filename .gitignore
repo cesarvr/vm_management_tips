@@ -1,6 +1,7 @@
 default-vm
 software_inventory
 default-vm.pub
+*.tfstate
 
 # SSH Keys
 *.pub
