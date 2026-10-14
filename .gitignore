@@ -1,7 +1,6 @@
 default-vm
 software_inventory
 default-vm.pub
-*.tfstate
 
 # SSH Keys
 *.pub
@@ -14,3 +13,21 @@ id_rsa
 .AppleDouble
 .LSOverride
 EOF
+
+# Local `.terraform` directory containing downloaded providers and modules
+.terraform/
+.terraform.lock.hcl.tmp
+
+# State files (contain sensitive data and secrets in plain text)
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Variable definition files containing secrets
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
