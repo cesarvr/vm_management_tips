@@ -1,0 +1,77 @@
+---
+- name: Prepare nodes for Kubernetes installation
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Disable swap immediately
+      ansible.builtin.command:
+        cmd: swapoff -a
+      when: ansible_swaptotal_mb > 0
+      changed_when: false
+
+    - name: Remove swap entry from /etc/fstab
+      ansible.builtin.replace:
+        path: /etc/fstab
+        regexp: '^(\s*[^#\s]+\s+[^#\s]+\s+swap\s+.*)$'
+        replace: '# \1'
+
+    - name: Ensure required kernel modules are set to load on boot
+      ansible.builtin.copy:
+        dest: /etc/modules-load.d/k8s.conf
+        content: |
+          overlay
+          br_netfilter
+        mode: '0644'
+
+    - name: Load overlay kernel module
+      community.general.modprobe:
+        name: overlay
+        state: present
+
+    - name: Load br_netfilter kernel module
+      community.general.modprobe:
+        name: br_netfilter
+        state: present
+
+    - name: Configure sysctl parameters for Kubernetes
+      ansible.posix.sysctl:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        sysctl_file: /etc/sysctl.d/k8s.conf
+        state: present
+        reload: true
+      loop:
+        - { key: 'net.bridge.bridge-nf-call-iptables', value: '1' }
+        - { key: 'net.bridge.bridge-nf-call-ip6tables', value: '1' }
+        - { key: 'net.ipv4.ip_forward', value: '1' }
+
+
+    - name: Set hostname on Control Plane node
+      ansible.builtin.hostname:
+        name: k8s-control
+      when: inventory_hostname == 'node1'  # Change 'vm1' to match your inventory host name
+
+    - name: Set hostname on Worker 1 node
+      ansible.builtin.hostname:
+        name: k8s-worker1
+      when: inventory_hostname == 'node2'  # Change 'vm2' to match your inventory host name
+
+    - name: Set hostname on Worker 2 node
+      ansible.builtin.hostname:
+        name: k8s-worker2
+      when: inventory_hostname == 'node3'  # Change 'vm3' to match your inventory host name
+
+
+
+    # Adding all the nodes hostname to each node /etc/hosts 
+    # So they can talk to each other using just hostnames 
+    - name: Ensure all inventory nodes are present in /etc/hosts
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        # Match lines starting with the node's IP to avoid duplicate entries
+        regexp: "^#?\\s*{{ hostvars[item]['ansible_host'] | default(item) }}\\s+.*"
+        line: "{{ hostvars[item]['ansible_host'] | default(item) }} {{ hostvars[item]['node_hostname'] | default(item) }}"
+        state: present
+      loop: "{{ play_hosts }}"
+
